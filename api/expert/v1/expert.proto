@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package expert.v1;
+
+option go_package = "portal.com/portal/pkg/expert/v1";
+
+// ExpertService manages the lifecycle and querying of Leaf Experts.
+service ExpertService {
+  // CreateOrUpdateExpert creates a new expert or updates an existing one.
+  rpc CreateOrUpdateExpert(CreateOrUpdateExpertRequest) returns (CreateOrUpdateExpertResponse) {}
+
+  // QueryExpert gets a response from a specific Leaf Expert.
+  rpc QueryExpert(QueryExpertRequest) returns (QueryExpertResponse) {}
+}
+
+enum ExpertType {
+  EXPERT_TYPE_UNSPECIFIED = 0;
+  EXPERT_TYPE_SIMPLE = 1;
+  EXPERT_TYPE_RAG = 2;
+}
+
+message CreateOrUpdateExpertRequest {
+  string url = 1;
+  string content = 2;
+  ExpertType expert_type = 3;
+}
+
+message CreateOrUpdateExpertResponse {
+  string expert_id = 1;
+}
+
+message QueryExpertRequest {
+  string url = 1;
+  string query = 2;
+  // We can add conversation history later if needed.
+}
+
+message QueryExpertResponse {
+  string answer = 1;
+}

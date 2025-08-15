@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package rag.v1;
+
+option go_package = "portal.com/portal/pkg/rag/v1";
+
+// RAGService provides methods for indexing and retrieving content.
+service RAGService {
+  // IndexContent processes and stores content for a given URL.
+  rpc IndexContent(IndexContentRequest) returns (IndexContentResponse) {}
+
+  // RetrieveContext retrieves relevant context chunks for a query.
+  rpc RetrieveContext(RetrieveContextRequest) returns (RetrieveContextResponse) {}
+}
+
+message IndexContentRequest {
+  string url = 1;
+  string content = 2;
+}
+
+message IndexContentResponse {
+  // This can be extended in the future, e.g., with indexing status.
+}
+
+message RetrieveContextRequest {
+  string url = 1;
+  string query = 2;
+}
+
+message RetrieveContextResponse {
+  repeated string context_chunks = 1;
+}

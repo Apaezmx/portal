@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: portal-postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=portal
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  rag-service:
+    build:
+      context: .
+      dockerfile: cmd/rag-service/Dockerfile
+    ports:
+      - "50051:50051"
+    depends_on:
+      - postgres
+
+  expert-service:
+    build:
+      context: .
+      dockerfile: cmd/expert-service/Dockerfile
+    ports:
+      - "50052:50052"
+    depends_on:
+      - postgres
+      - rag-service
+
+  nats:
+    image: nats:2.10
+    container_name: portal-nats
+    ports:
+      - "4222:4222" # Client port
+      - "8222:8222" # HTTP monitoring port
+
+  indexing-job:
+    build:
+      context: .
+      dockerfile: cmd/indexing-job/Dockerfile
+    depends_on:
+      - expert-service
+      - nats
+
+  query-orchestrator:
+    build:
+      context: .
+      dockerfile: cmd/query-orchestrator/Dockerfile
+    ports:
+      - "50053:50053"
+    depends_on:
+      - expert-service
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: cmd/api-gateway/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - query-orchestrator
+      - expert-service
+
+  crawler-service:
+    build:
+      context: .
+      dockerfile: cmd/crawler-service/Dockerfile
+    depends_on:
+      - nats
+
+volumes:
+  postgres_data:

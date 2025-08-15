@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package orchestrator.v1;
+
+option go_package = "portal.com/portal/pkg/orchestrator/v1";
+
+// QueryOrchestratorService is the main entry point for search queries.
+service QueryOrchestratorService {
+  // Search performs a search query against the expert network.
+  rpc Search(SearchRequest) returns (SearchResponse) {}
+}
+
+message SearchRequest {
+  string query = 1;
+}
+
+message SearchResponse {
+  string summary = 1;
+  repeated Source sources = 2;
+}
+
+message Source {
+  string url = 1;
+  string title = 2;
+  string snippet = 3;
+}
