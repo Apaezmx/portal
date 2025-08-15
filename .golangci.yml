@@ -1,0 +1,21 @@
+run:
+  timeout: 5m
+  skip-dirs:
+    - vendor/
+
+linters:
+  enable:
+    - gofmt
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - ineffassign
+    - typecheck
+    - gosimple
+    - stylecheck
+    - unconvert
+  disable:
+    - maligned
+    - scopelint
+    - golint
